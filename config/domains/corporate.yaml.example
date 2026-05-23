@@ -1,0 +1,22 @@
+domain: corporate
+
+# This file defines the role-type vocabulary for the "corporate"
+# domain. The setup wizard generates this from your career
+# inventory. You can also hand-edit.
+#
+# Each role_type needs:
+#   description: one-line summary
+#   search_terms: list of job-title strings the discovery agent uses
+#   typical_seniority: [junior, mid, senior, executive]
+#
+# Example:
+#
+#   software_engineer:
+#     description: "Designs and builds software systems"
+#     search_terms:
+#       - "software engineer"
+#       - "software developer"
+#       - "backend engineer"
+#     typical_seniority: [mid, senior]
+
+role_types: {}

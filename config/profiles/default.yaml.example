@@ -1,0 +1,159 @@
+# config/profiles/default.yaml.example — template
+#
+# Copy this file to `default.yaml` and replace placeholder values
+# with your own. The onboarding wizard (Spec 1) will generate
+# `default.yaml` for you on first run, but you can also hand-edit.
+#
+# Every field below is documented in CONFIGURATION.md.
+
+profile_id: default
+display_name: "Your Name"
+domain: corporate
+
+# Day-boundary for the agent's "today". A day starts at this hour
+# (local time) and runs to the same hour the next day. Default 3
+# matches a midnight-Pacific quota reset (Google AI Studio free tier).
+agent:
+  day_boundary_hour: 3
+
+# Cities the agent searches. Use lowercase city names; the special
+# value `remote_<country>` (e.g. `remote_canada`) matches any posting
+# tagged remote in that country.
+target_cities:
+  - "your_city"
+  - "remote_canada"
+
+# Which role_types from config/domains/<domain>.yaml to pull. The
+# onboarding wizard auto-suggests these from your career inventory.
+target_role_types:
+  - "your_role_type"
+
+# Sector overlays per city (optional). Keys are city names from
+# target_cities; values are sector identifiers from the domain config.
+target_sectors_by_city: {}
+
+# Compensation expectations (used by the evaluator as soft signals,
+# not hard cutoffs).
+salary:
+  floor: 80000
+  target: 95000
+  cap: 120000
+
+# Preferred employer size: small | mid_sized | large | enterprise
+employer_size_priority: mid_sized
+
+# Paths to your private materials. These files are gitignored.
+inventory: source_materials/default/career_inventory.md
+exclusions: config/exclusions/default.yaml
+
+# Which discovery sources to run. Comment out any you don't want.
+sources_enabled:
+  - greenhouse_api
+  - lever_api
+  - ashby_api
+  - personio_api
+  - recruitee_api
+  - workable_api
+  - workday
+  - jobspy
+  - linkedin_guest
+  - job_bank_csv
+  - manual_entry
+  # - email_monitor   # requires Gmail OAuth setup (Spec 11)
+
+# JobSpy aggregator config. `sites` lists the boards to query.
+jobspy:
+  sites: [indeed, google]
+  cities: ["your_city"]
+  hours_old: 24
+  results_per_search: 50
+  rate_limit_seconds: 8
+  exact_phrase: true
+
+# LinkedIn guest API (public listings only — no auth).
+linkedin_guest:
+  keywords_traditional:
+    - "your role keyword 1"
+    - "your role keyword 2"
+  keywords_ai: []
+  locations:
+    - "Your City"
+  experience: [4, 5]        # Mid-Senior, Director
+  time: r86400              # 24h window
+  workplace: [1, 2, 3]      # On-site, Remote, Hybrid
+  list_rate_limit_seconds: 1.0
+  detail_rate_limit_seconds: 2.5
+  rate_limit_fallback_seconds: 4.0
+  card_text_skip_threshold: 200
+  max_pages_per_query: 8
+  fetch_details: true
+  request_timeout_seconds: 15
+
+# ATS public APIs. Slugs are populated by the ATS detector or
+# manually added when known.
+greenhouse_api:
+  slugs: []
+  rate_limit_seconds: 1.0
+
+lever_api:
+  slugs: []
+  rate_limit_seconds: 1.0
+
+ashby_api:
+  slugs: []
+  rate_limit_seconds: 1.0
+  include_compensation: true
+
+workable_api:
+  slugs: []
+  rate_limit_seconds: 3.0
+  fetch_details: true
+
+personio_api:
+  slugs: []
+  rate_limit_seconds: 1.0
+
+recruitee_api:
+  slugs: []
+  rate_limit_seconds: 1.0
+
+# Manual ATS overrides for companies where the ATS detector guesses
+# wrong. Format:
+#   "Company Display Name": {platform: <ats>, slug: "<slug>"}
+ats_overrides: {}
+
+# Job Bank monthly CSV dump (Canada-specific). Leave csv_path empty
+# to disable.
+job_bank_csv:
+  csv_path: ""
+
+# Workday discovery. Each tenant entry: short code + wd data center
+# digit + site slug. Populate from your target employer list.
+workday:
+  rate_limit_seconds: 2.0
+  fetch_details: true
+  tenants: []
+
+# Playwright Application Agent runtime knobs.
+applicant:
+  daily_application_cap: 10
+  screenshot_keep_days: 90
+
+# Email monitor (optional; requires Gmail OAuth credentials at
+# data/{profile}/gmail_credentials.json — gitignored).
+email_monitor:
+  hours_lookback: 24
+  recruiter_domains: []
+  newsletter_senders: []
+  search_query_override: null
+
+# Cloud evaluator (--evaluator cloud). Uses Google AI Studio free
+# tier. API key: set GEMINI_API_KEY env var or create
+# data/{profile}/gemini_api_key.txt (gitignored).
+cloud_evaluator:
+  model: gemma-4-31b-it
+  soft_stop: 1200
+  fast_eval_reserve: 100
+  debug_reserve: 100
+  max_retries_per_posting: 2
+  inventory_path: data/default/inventory_summary_compact.md

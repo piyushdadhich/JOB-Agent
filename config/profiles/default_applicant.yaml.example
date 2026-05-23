@@ -1,0 +1,70 @@
+# config/profiles/default_applicant.yaml.example — template
+#
+# Copy this file to `default_applicant.yaml` and fill in your own
+# values. The live file is gitignored (config/profiles/*_applicant.yaml)
+# so your PII never leaves your machine.
+#
+# This file holds the personal information the Playwright Application
+# Agent uses to auto-fill ATS forms (Greenhouse, Lever, Ashby, Workday,
+# Indeed, etc.). Required-at-fill-time fields are flagged below.
+
+# --- Identity (REQUIRED) -----------------------------------------
+first_name: "Your"
+last_name:  "Name"
+email:      "you@example.com"
+phone:      "555-000-0000"
+
+# --- Location ----------------------------------------------------
+city:        "Toronto"
+province:    "Ontario"
+country:     "Canada"
+postal_code: ""
+
+# --- Online presence ---------------------------------------------
+linkedin_url:  ""
+portfolio_url: ""
+
+# --- Work authorization ------------------------------------------
+# Free-text; common values: "Canadian Citizen", "Permanent Resident",
+# "US Citizen", "Work Permit", "Requires sponsorship".
+work_authorization:    "Permanent Resident"
+requires_sponsorship:  false
+
+# --- Relocation --------------------------------------------------
+willing_to_relocate: true
+relocation_cities: []
+
+# --- Compensation ------------------------------------------------
+# `salary_expectation` is free-text shown verbatim on forms; the
+# numeric range below is used by the agent for matching.
+salary_expectation:     "Competitive / Open to discussion"
+salary_min:             0
+salary_max:             0
+salary_currency:        "CAD"
+
+# --- Experience --------------------------------------------------
+total_years_experience: 0
+
+# --- Start date --------------------------------------------------
+# Free-text; common values: "Immediately", "2 weeks notice", a date.
+start_date: "Immediately"
+
+# --- Education ---------------------------------------------------
+education:
+  - degree: "Your Degree (e.g. MBA)"
+    school: "Your School"
+    graduation_year: "YYYY"
+
+# --- Certifications ----------------------------------------------
+certifications:
+  - name: "PMP"
+    issuer: "PMI"
+    active: true
+
+# --- Demographics (most ATS forms include these) -----------------
+# Leave as "Prefer not to ..." to decline disclosure.
+demographics:
+  gender:          "Prefer not to say"
+  ethnicity:       "Prefer not to say"
+  veteran_status:  "Prefer not to answer"
+  disability:      "Prefer not to disclose"

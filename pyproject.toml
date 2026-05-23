@@ -1,0 +1,142 @@
+# Spec 16 TASK 1 — packaging manifest.
+#
+# `pip install -e .` from the repo root installs the runtime
+# dependencies and registers the `job-agent` console script. The
+# four optional-dependency groups (local / api / gmail / skills)
+# gate features that not every install will need; `all` pulls
+# everything.
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "job-agent"
+version = "0.1.0"
+description = "Local-first AI job search agent — discovery, evaluation, application drafting."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+authors = [{ name = "The Job Agent Authors" }]
+keywords = ["job-search", "ats", "career", "agent", "automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business",
+]
+
+# Runtime dependencies the core pipeline always needs. Optional
+# integrations (skill extractor, scrapegraphai-backed scrapers) live
+# in [project.optional-dependencies] below.
+#
+# httpx, ollama, and the google-* / google-generativeai libs are
+# imported at module-load time by several production modules
+# (llm/client.py, engine/discovery/email_monitor.py,
+# engine/llm/gemma_cloud_client.py, etc.), so they're effectively
+# required even for users who don't actively route through those
+# paths — a missing import there breaks anything that touches the
+# affected modules transitively. They live in core for that reason.
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn>=0.30",
+    "httpx>=0.27",
+    "python-multipart>=0.0.6",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "python-jobspy>=1.1",
+    "python-docx>=0.8",
+    "playwright>=1.40",
+    "pywebview>=4.0",
+    "psutil>=5.9",
+    "ollama>=0.3",
+    "google-auth>=2.29",
+    "google-auth-oauthlib>=1.2",
+    "google-auth-httplib2>=0.2",
+    "google-api-python-client>=2.130",
+    "google-genai>=1.0",
+]
+
+[project.optional-dependencies]
+# Hosted LLM APIs. Pick one or install all three — the LLM router
+# picks based on profile config + fallback chain. (google-generativeai
+# is already in core because the cloud evaluator imports it
+# unconditionally.)
+api = [
+    "anthropic>=0.34",
+    "openai>=1.35",
+]
+
+# Heavy LLM-driven scraper. Pulls langchain + scrapegraphai (~500 MB);
+# the smart-scraper code path is exercised by tests with import-skip
+# guards when this extra isn't installed.
+scraper = ["scrapegraphai>=1.0"]
+
+# Skill extraction via the ojd-daps-skills taxonomy. Heavy install
+# (~ 1.5 GB of spaCy models + torch); the skill extractor falls
+# back to a no-op if this group isn't present.
+skills = ["ojd-daps-skills>=3.0"]
+
+# Dev / test tooling.
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-timeout>=2.0",
+]
+
+# Pull every optional integration in one go.
+all = [
+    "job-agent[api,scraper,skills]",
+]
+
+[project.scripts]
+job-agent = "jobagent.cli:main"
+
+# Tell setuptools which top-level directories ARE Python packages.
+# The repo also contains config/, data/, source_materials/, scripts/,
+# tests/, docs/, dashboard/frontend/ — those are not Python packages
+# and stay outside the install.
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+    "jobagent*",
+    "agents*",
+    "engine*",
+    "llm*",
+    "skills*",
+    "dashboard.backend*",
+]
+exclude = [
+    "venv*",
+    "venv-skills*",
+    "vendor*",
+    "tests*",
+    "scripts*",
+    "data*",
+    "source_materials*",
+    "logs*",
+    "docs*",
+    "dashboard.frontend*",
+]
+
+[tool.pytest.ini_options]
+# pytest.ini already pins testpaths = tests and exclusions — this
+# block exists so the runner picks up the same settings when
+# pyproject.toml is the canonical config.
+testpaths = ["tests"]
+norecursedirs = [
+    "vendor",
+    "venv",
+    "venv-skills",
+    "node_modules",
+    "dashboard/frontend",
+    ".pytest_cache",
+]

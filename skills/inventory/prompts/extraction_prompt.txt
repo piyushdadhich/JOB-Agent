@@ -1,0 +1,173 @@
+You are extracting structured career data from a candidate's career
+inventory. The inventory is below in markdown format. Your job is
+to produce a single JSON object matching the exact schema specified.
+
+Return ONLY the JSON object. No prose, no markdown fences, no
+explanation. The JSON must be parseable by json.loads on the first
+attempt.
+
+CRITICAL ANTI-FABRICATION RULES (read these first):
+
+ANTI-1. SOURCE GROUNDING. Every fact in your output must be grounded
+   in the inventory text provided below. If the inventory does not
+   state something, you must NOT invent or infer it. This applies
+   especially to: education, certifications, degree names, school
+   names, dates, employer names, employer industries, locations,
+   quantified outcomes, salary figures, and contact details. If a
+   field cannot be determined from the inventory, output null. Do
+   NOT guess.
+
+ANTI-2. STRICT FIELD ALLOWLIST. Each object type in your output
+   has a fixed set of permitted fields. You must NOT add any field
+   not in the schema. Specifically:
+   - role objects MUST contain ONLY: id, employer, title,
+     start_date, end_date, location, function, industry,
+     seniority_level, skill_clusters, evidence_phrases, outcomes,
+     cultural_signals, red_flags
+   - transferable_skill_cluster objects MUST contain ONLY: name,
+     summary, evidence_role_ids
+   - trajectory MUST contain ONLY: current_level, target_levels,
+     advance_step, lateral_step, avoid
+   Do NOT add fields like "description", "skills", "skills_gained",
+   "notes", "role", "end" (use end_date), or any other field not
+   listed above.
+
+ANTI-3. STOP AFTER THE EXTRACT. After you output the closing brace
+   of the InventoryExtract object, STOP. Generate no further content.
+   Do NOT produce summaries, key_skills lists, career_narratives,
+   technical_skills lists, soft_skills lists, achievements,
+   education sections, recommendations, gaps, action_items,
+   keywords, or any other JSON objects. Your task is data extraction
+   only. The extraction is complete when the closing brace is
+   emitted.
+
+ANTI-4. NO META-ANALYSIS. Do NOT evaluate the candidate. Do NOT
+   recommend roles they should pursue. Do NOT identify gaps in their
+   profile. Do NOT generate resume advice. The output is a
+   structured representation of what is in the inventory, nothing
+   more.
+
+ANTI-5. NULL OVER INVENTION. When in doubt, output null. A null
+   field is correct. An invented field is a fabrication. The
+   downstream system can handle null. It cannot detect fabrication.
+
+ANTI-6. SCHEMA IS THE LAW. The OUTPUT JSON SCHEMA section below
+   defines the exact shape of valid output. Any deviation -- extra
+   fields, missing required fields, wrong field names, wrong nesting
+   -- is a failure. Conform to the schema exactly as written.
+
+EXTRACTION RULES:
+
+1. Roles: extract every distinct role from the inventory. Each role
+   gets a unique snake_case id derived from employer + key descriptor
+   + end year (e.g. "testco_payments_2024",
+   "cognizant_discover_2023"). If the role is current, use the
+   current year.
+
+2. Function field: ONE sentence describing what the role actually
+   did, NOT the title. Example: "Validate land acquisition payments
+   under Ontario Expropriations Act before fund release." NOT
+   "Payments Officer."
+
+3. Skill clusters: snake_case tags grouping related capabilities.
+   Use existing tags where possible; introduce new ones only when
+   needed. Avoid overly generic tags ("management", "communication").
+   Examples: "payments_operations", "expropriations_compliance",
+   "offshore_delivery_leadership", "sap_otc_implementation".
+
+4. Evidence phrases: 3-7 phrases per role, paraphrased or quoted
+   from the inventory, that ground each cluster. These are what a
+   future evaluator will use to verify a match.
+
+5. Outcomes: measurable accomplishments. Numbers, percentages,
+   timeframes. Example: "Caught $50K legal fees overpayment before
+   release." NOT "Caught errors in payment files." If the inventory
+   does not state measurable outcomes for a role, output an empty
+   list []. Do NOT invent metrics.
+
+6. Cultural signals: tags about the work environment.
+   Examples: "matrix_organization", "regulated_industry",
+   "founder_proximity", "offshore_team_lead", "sole_implementer".
+
+7. Red flags: lessons learned, things that didn't work, environments
+   to avoid. Example: "matrix_no_delivery_ownership" (recognized
+   from Acme Corp MegaBank declined-reassignment situation). If a role
+   has no red flags in the inventory, output an empty list [].
+
+8. Transferable skill clusters: cross-role groupings. For each, list
+   the role IDs that demonstrate it. Every role id referenced here
+   must be present in the roles array; do not invent ids.
+
+9. Trajectory: based on the candidate's most senior recent roles
+   (typically the last 3-5 years of substantive work), what's the
+   advance, lateral, and avoid pattern. Recency and seniority are
+   both signals; weight seniority slightly higher when they
+   conflict.
+
+10. Hard exclusions and geography: copy verbatim from any explicit
+    statement in the inventory. If the inventory does not state
+    hard exclusions, output an empty list []. Same for geography.
+
+11. Red flags should be patterns or anti-patterns, NOT specific
+    company names. Example: "matrix_no_delivery_ownership" (good --
+    describes a pattern). NOT "avoid_MegaBank_engagement" (bad --
+    names a specific company). The hard_exclusions field is the
+    correct place for company-specific exclusions; red_flags is
+    for environmental/cultural patterns to recognize across
+    employers.
+
+INVENTORY:
+
+{inventory_text}
+
+<!-- NOTE: The {} braces below are LITERAL JSON structure. Do not substitute them. -->
+
+OUTPUT JSON SCHEMA (return matching this shape exactly):
+
+{
+  "schema_version": 1,
+  "profile_id": "{profile_id}",
+  "source_hash": "{source_hash}",
+  "extracted_at": "{extracted_at}",
+  "extractor_model": "gemma4:e4b",
+  "roles": [
+    {
+      "id": "<snake_case>",
+      "employer": "<string>",
+      "title": "<string>",
+      "start_date": "YYYY-MM",
+      "end_date": "YYYY-MM" or null,
+      "location": "<string>",
+      "function": "<one sentence: what the role actually did>",
+      "industry": "<string>",
+      "seniority_level": "<one of: junior, mid, senior, lead, manager, director, vp>",
+      "skill_clusters": ["<snake_case>", ...],
+      "evidence_phrases": ["<3-7 phrases>", ...],
+      "outcomes": ["<measurable accomplishments>", ...],
+      "cultural_signals": ["<snake_case>", ...],
+      "red_flags": ["<pattern_snake_case>", ...]
+    }
+  ],
+  "transferable_skill_clusters": [
+    {
+      "name": "<snake_case>",
+      "summary": "<one sentence>",
+      "evidence_role_ids": ["<role.id>", ...]
+    }
+  ],
+  "trajectory": {
+    "current_level": "<string>",
+    "target_levels": ["<string>", ...],
+    "advance_step": "<string>",
+    "lateral_step": "<string>",
+    "avoid": ["<string>", ...]
+  },
+  "hard_exclusions": ["<string>", ...],
+  "geography": ["<string>", ...]
+}
+
+REMINDER: After the closing brace of the InventoryExtract object,
+STOP. Output nothing else. No summary. No analysis. No
+recommendations. No additional JSON objects.
+
+Begin extraction. Output the InventoryExtract JSON object only.

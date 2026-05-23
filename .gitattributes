@@ -1,0 +1,41 @@
+# Normalize line endings across Windows / macOS / Linux. Text files
+# stored with LF; the working tree gets the platform's native style
+# (LF on macOS/Linux, CRLF on Windows) so editors and Git's own
+# warnings stay consistent.
+
+* text=auto
+
+# Explicit overrides for source / config files — always store as LF
+# so diffs are stable across collaborators.
+*.py     text eol=lf
+*.js     text eol=lf
+*.jsx    text eol=lf
+*.ts     text eol=lf
+*.tsx    text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.md     text eol=lf
+*.yaml   text eol=lf
+*.yml    text eol=lf
+*.sql    text eol=lf
+*.toml   text eol=lf
+*.json   text eol=lf
+*.sh     text eol=lf
+
+# Windows-only batch / PS scripts: CRLF on disk so they run on Windows.
+*.ps1    text eol=crlf
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+# Binary files — never touched by EOL normalization.
+*.docx   binary
+*.pdf    binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.db     binary
+*.whl    binary
+*.gz     binary
+*.zip    binary

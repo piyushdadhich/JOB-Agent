@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sample Application Form</title>
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+  label { display: block; margin: 0.6em 0 0.2em; font-weight: 600; }
+  input, select, textarea { width: 100%; box-sizing: border-box; }
+  fieldset { margin: 1em 0; padding: 0.6em; }
+  fieldset label { font-weight: normal; display: inline; margin-right: 1em; }
+</style>
+</head>
+<body>
+<h1>Senior Project Manager -- Sample Co.</h1>
+<form id="application-form">
+
+  <!-- Identity -->
+  <label for="fn">First Name *</label>
+  <input id="fn" type="text" name="first_name" required>
+
+  <label for="ln">Last Name *</label>
+  <input id="ln" type="text" name="last_name" required>
+
+  <label for="em">Email *</label>
+  <input id="em" type="email" name="email" required>
+
+  <label for="ph">Phone Number *</label>
+  <input id="ph" type="tel" name="phone" required>
+
+  <label for="city">City</label>
+  <input id="city" type="text" name="city">
+
+  <!-- Location dropdown -->
+  <label for="country">Country of residence</label>
+  <select id="country" name="country">
+    <option>Canada</option>
+    <option>United States</option>
+    <option>United Kingdom</option>
+  </select>
+
+  <!-- Work auth (radio) -->
+  <fieldset>
+    <legend>Are you legally authorized to work in Canada?</legend>
+    <label><input type="radio" name="auth" value="yes"> Yes</label>
+    <label><input type="radio" name="auth" value="no"> No</label>
+  </fieldset>
+
+  <!-- Sponsorship (radio) -->
+  <fieldset>
+    <legend>Do you require sponsorship?</legend>
+    <label><input type="radio" name="sponsor" value="yes"> Yes</label>
+    <label><input type="radio" name="sponsor" value="no"> No</label>
+  </fieldset>
+
+  <!-- Salary -->
+  <label for="salary">Expected salary (CAD)</label>
+  <input id="salary" type="number" name="salary">
+
+  <!-- Experience -->
+  <label for="yoe">Years of project management experience</label>
+  <input id="yoe" type="number" name="yoe">
+
+  <!-- Links -->
+  <label for="linkedin">LinkedIn profile</label>
+  <input id="linkedin" type="url" name="linkedin">
+
+  <!-- Free text -->
+  <label for="cover">Why are you interested in this role?</label>
+  <textarea id="cover" name="cover" rows="4"></textarea>
+
+  <!-- File upload -->
+  <label for="resume">Resume</label>
+  <input id="resume" type="file" name="resume">
+
+  <!-- Demographics dropdown -->
+  <label for="gender">Gender identity</label>
+  <select id="gender" name="gender">
+    <option>Male</option>
+    <option>Female</option>
+    <option>Non-binary</option>
+    <option>I don't wish to answer</option>
+  </select>
+
+  <!-- Consent -->
+  <label>
+    <input type="checkbox" name="terms" required>
+    I agree to the terms and privacy policy
+  </label>
+
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>

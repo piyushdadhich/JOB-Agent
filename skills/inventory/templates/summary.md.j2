@@ -1,0 +1,43 @@
+# Career Inventory Summary — {{ profile_id }}
+
+_Generated {{ extracted_at }} from career_inventory.md
+(source hash: {{ source_hash[:16] }}...)_
+
+## Trajectory
+- Current level: {{ trajectory.current_level }}
+- Target levels: {{ trajectory.target_levels | join(", ") }}
+- Advance step: {{ trajectory.advance_step }}
+- Lateral step: {{ trajectory.lateral_step }}
+
+## Hard exclusions
+{% for item in hard_exclusions %}
+- {{ item }}
+{% endfor %}
+
+## Avoid patterns
+{% for item in trajectory.avoid %}
+- {{ item }}
+{% endfor %}
+
+## Roles
+{% for role in roles %}
+### {{ role.title }} — {{ role.employer }} ({{ role.start_date }} – {{ role.end_date or "Present" }})
+_Role ID: `{{ role.id }}`_
+
+- Function: {{ role.function }}
+- Industry: {{ role.industry or "N/A" }}
+- Seniority: {{ role.seniority_level }}
+- Skill clusters: {{ role.skill_clusters | join(", ") }}
+{% if role.outcomes %}
+- Key outcomes:
+{% for outcome in role.outcomes[:3] %}
+  - {{ outcome }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+## Transferable skill clusters
+{% for cluster in transferable_skill_clusters %}
+- **{{ cluster.name }}**: {{ cluster.summary }}
+  (evidence: {{ cluster.evidence_role_ids | join(", ") }})
+{% endfor %}

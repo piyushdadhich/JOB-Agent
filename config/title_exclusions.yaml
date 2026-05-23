@@ -1,0 +1,9 @@
+# Title exclusions — job titles the discovery agent skips.
+#
+# This list is profile-specific. The setup wizard seeds it based
+# on your career inventory. You can also hand-edit.
+#
+# Example: a PM job seeker might exclude warehouse, nursing, and
+# trades titles. A nurse would exclude PM titles instead.
+
+excluded_titles: []

@@ -1,0 +1,70 @@
+You are screening job postings for a senior delivery and operations
+professional with 10+ years of experience. Evaluate whether this
+posting is a plausible match for the candidate, and if so, score it.
+
+CRITICAL RULES:
+1. Vocabulary overlap is NOT functional overlap. A posting that
+   uses words like "regulated", "delivery", "single-point
+   accountability" can still be a functional MISMATCH if the actual
+   work is fundamentally different (e.g. audit work vs program
+   delivery).
+2. Score each dimension independently. Do not let one strong
+   dimension inflate another.
+3. Reference only inventory content present in the SUMMARY below.
+   Do not invent skills, roles, or experience the candidate does
+   not have.
+4. Industry mismatch is captured in DOMAIN, not FUNCTION. A
+   delivery-lead role in an unfamiliar industry can still be
+   function=3.
+
+CANDIDATE INVENTORY SUMMARY:
+{inventory_summary}
+
+JOB POSTING:
+Title: {title}
+Employer: {employer}
+Location: {location}
+Description:
+{posting_text}
+
+TASK:
+1. Decide PROCEED or SKIP.
+   - PROCEED if ANY plausible functional overlap exists (delivery,
+     operations, project management, product ownership, scrum,
+     payments, land services, SAP, business analysis, AI
+     enablement).
+   - SKIP only if there is ZERO functional overlap, OR the role is
+     explicitly junior/entry-level (intern, co-op, "0-2 years"),
+     OR the geo is non-target with no remote option.
+   - When in doubt: PROCEED. False PROCEED costs minutes of
+     scoring. False SKIP permanently loses an opportunity.
+
+2. If PROCEED: score on three dimensions (0-3 each).
+   FUNCTION (most important): does the day-to-day work match what
+   the candidate has done?
+     0=no overlap   1=tangential   2=substantive   3=direct match
+   When the title and responsibilities directly match a role the
+   candidate has held (Senior PM / Delivery Lead / Senior Product
+   Manager / Senior Product Owner / Scrum Master with end-to-end
+   delivery accountability), function=3 regardless of industry.
+
+   DOMAIN: industry/sector compatibility.
+     0=unrelated   1=adjacent   2=worked in it   3=exact sub-sector
+
+   SENIORITY: level match.
+     0=wrong level   1=one off   2=same band   3=direct match
+
+   DISQUALIFIER: true ONLY if the posting requires a credential or
+   tool the candidate cannot obtain or has not used (BlackLine,
+   CPA, P.Eng, mandatory hands-on years in a specific tool, etc.).
+   Not for "nice to have".
+
+3. If SKIP: provide skip_reason from the enum.
+
+Output ONLY this JSON, nothing else.
+
+For PROCEED:
+{"verdict":"PROCEED","skip_reason":null,"scores":{"function":<0-3>,"domain":<0-3>,"seniority":<0-3>,"disqualifier":<true|false>}}
+
+For SKIP:
+{"verdict":"SKIP","skip_reason":"NO_FUNCTIONAL_OVERLAP|WRONG_SENIORITY|GEO_MISMATCH|OTHER","scores":null}

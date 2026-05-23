@@ -1,0 +1,9 @@
+# Red-flag phrases — strings in posting text that trigger a
+# warning badge on the shortlist card.
+#
+# These are optional and user-defined. Common examples:
+#   - "unpaid internship"
+#   - "must have own vehicle"
+#   - "commission only"
+
+red_flag_phrases: []
